@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from entities.base_entity import BaseEntity
 from datetime import datetime
 from enums.workout_type_enum import WorkoutTypeEnum
-from models.workout_model import Workout
+from models.workout_model import WorkoutModel
 
 class WorkoutEntity(BaseEntity):
     """Schema for the Workout table"""
@@ -28,10 +28,10 @@ class WorkoutEntity(BaseEntity):
     # Avg Heartrate during workout
     heartrate: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     # Workout type: long, recovery, speed, interval
-    workout_type: Mapped[WorkoutTypeEnum] = mapped_column(Enum(WorkoutTypeEnum), nullable=False)
+    workout_type: Mapped[WorkoutTypeEnum] = mapped_column(Enum(WorkoutTypeEnum), nullable=False, default = WorkoutTypeEnum.BASE)
 
     @classmethod
-    def from_model(cls, model: Workout):
+    def from_model(cls, model: WorkoutModel):
         """Takes in Pydantic model, returns SQLAlchemy Entity"""
         return cls(
             id=model.id,
@@ -46,7 +46,7 @@ class WorkoutEntity(BaseEntity):
     
     def to_model(self):
         """Takes in SQLAlchemy Entity, Returns Pydantic Model"""
-        return Workout(
+        return WorkoutModel(
             id=self.id,
             name=self.name,
             start_time=self.start_time,

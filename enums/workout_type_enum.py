@@ -5,4 +5,5 @@ class WorkoutTypeEnum(str, Enum):
     LONG = "long"
     SPEED = "speed"
     INTERVAL = "interval"
+    BASE = "base"
     
