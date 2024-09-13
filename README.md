@@ -31,7 +31,7 @@ This API makes use of FastAPI's APIRouter() to group all the workout endpoints u
 2. Create tables (and database if not already created): `python -m scripts.reset_database`
 3. Start application: `fastapi dev main.py`
 4. Go to http://127.0.0.1:8000/docs
-5. Expand endpoints and use "Try it out" button to test
+5. Expand endpoints and use "Try it out" button to test or send requests to endpoints
 ## API Endpoints
 ### Get Workouts - GET /workouts
 #### Parameters:
