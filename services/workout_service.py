@@ -1,5 +1,6 @@
 from datetime import datetime
 from fastapi import Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from database import db_session
 from enums.workout_type_enum import WorkoutTypeEnum
@@ -30,11 +31,13 @@ class WorkoutService:
 
         if workout_type:
             query = query.filter(WorkoutEntity.workout_type == workout_type)
+
         if min_distance:
             if min_distance < 0:
                 raise HTTPException(status_code=400, detail="Negative minimum distance")
             
             query = query.filter(WorkoutEntity.distance >= min_distance)
+            
         if after_time:
             query = query.filter(WorkoutEntity.start_time > after_time)
 
@@ -59,6 +62,23 @@ class WorkoutService:
 
        
         return workout_entity.to_model()
+    def get_avg_hr(self) -> float:
+        """
+        Gets the average heart rate accross all workouts.
+
+        Args:
+            None
+        Returns:
+            float: the average heart rate accross all workouts
+        """
+        avg_heart_rate = self.db.query(func.avg(WorkoutEntity.heartrate)).scalar()
+
+        if avg_heart_rate is None:
+            raise HTTPException(status_code=404, detail="No workouts found")
+
+       
+        return avg_heart_rate
+    
 
     def create(self, workout : WorkoutModel) -> WorkoutModel:
         """
@@ -80,7 +100,7 @@ class WorkoutService:
 
         self.db.add(workout_ent)
         self.db.commit()
-
+        
         return workout_ent.to_model()
     
     def update(self, id : int, workout : WorkoutEntity) -> WorkoutEntity:

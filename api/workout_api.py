@@ -24,6 +24,10 @@ def get_workouts(workout_type: WorkoutTypeEnum | None = None,
 
     Returns:
         list[WorkoutModel]: All workouts matching the filters
+
+    Responses:
+        200 OK - The request has succeeded and the response contains the requested data
+        400 Bad Request - The server could not understand the request due to invalid syntax
     """
 
     return workout_service.get_workouts(workout_type, min_distance, after_time)
@@ -39,12 +43,34 @@ def get_by_id(workout_id: int, workout_service: WorkoutService = Depends()) -> W
 
     Returns:
         WorkoutModel: the workout matching the id
+
+    Responses:
+        200 OK - The request has succeeded and the response contains the requested data
+        404 Not Found - The requested resource does not exist
     """
 
     return workout_service.get_by_id(workout_id)
 
+@api.get("/heartrate/average")
+def get_avg_hr(workout_service: WorkoutService = Depends()) -> dict[str, float]:
+    """
+    Gets average heart rate accross workouts
 
-@api.post("")
+    Parameters:
+        workout_service: An injected workout service instance 
+
+    Returns:
+        dict[str, float]: JSON format dict
+
+    Responses:
+        200 OK - The request has succeeded and the response contains the requested data
+        404 Not Found - The requested resource does not exist
+    """
+
+    return {"avg_heart_rate": workout_service.get_avg_hr()}
+
+
+@api.post("",status_code=201, response_model=WorkoutModel)
 def new_workout(workout: WorkoutModel, workout_service: WorkoutService = Depends()) -> WorkoutModel:
     """
     Creates a workout
@@ -55,6 +81,10 @@ def new_workout(workout: WorkoutModel, workout_service: WorkoutService = Depends
 
     Returns:
         WorkoutModel: the workout that was just created
+
+    Responses:
+        201 Created - The request has succeeded and the response contains the requested data
+        400 Bad Request - The server could not understand the request due to invalid syntax
     """
 
     return workout_service.create(workout)
@@ -71,6 +101,11 @@ def update_workout(workout_id :int, workout: WorkoutModel, workout_service: Work
 
     Returns:
         WorkoutModel: the updated workout
+
+    Responses:
+        200 OK - The request has succeeded and the response contains the requested data
+        400 Bad Request - The server could not understand the request due to invalid syntax
+        404 Not Found - The requested resource does not exist
     """
 
     return workout_service.update(workout_id, workout)
@@ -86,6 +121,10 @@ def delete_workout(workout_id :int, workout_service: WorkoutService = Depends())
 
     Returns:
         None
+    
+    Responses:
+        200 OK - The request has succeeded and the response contains the requested data
+        404 Not Found - The requested resource does not exist
     """
 
     workout_service.delete(workout_id)
